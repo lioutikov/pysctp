@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Python-side bindings
-# 
+#
 # This library is free software; you can redistribute it and/or modify it
 # under the terms of the GNU Lesser General Public License as published by the
 # Free Software Foundation; either version 2.1 of the License, or (at your
@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU Lesser General Public License
 # along with this library; If not, see <http://www.gnu.org/licenses/>.
-# 
+#
 # Elvis Pfützenreuter (elvis.pfutzenreuter@{gmail.com,indt.org.br})
 # Copyright (c) 2005 Instituto Nokia de Tecnologia
 
@@ -37,18 +37,18 @@ So it should fit in most places where a "real" socket is expected.
 When receiving data, it is also possible to receive metadata in the
 for of events. An event will be one of the following classes:
 
-sndrcvinfo(): 
-notification(): 
+sndrcvinfo():
+notification():
 assoc_change():
-paddr_change(): 
-send_failed(): 
-remote_error(): 
-shutdown_event(): 
-pdapi_event(): 
-adaptation_event(): 
+paddr_change():
+send_failed():
+remote_error():
+shutdown_event():
+pdapi_event():
+adaptation_event():
 
 Every SCTP socket has a number of properties. Two "complex" properties,
-that contain a number of sub-properties, are: 
+that contain a number of sub-properties, are:
 
 sctpsocket.events = event_subscribe()
 sctpsocket.initparams = initparams()
@@ -56,7 +56,7 @@ sctpsocket.initparams = initparams()
 Please take a look in the classes' documentation to learn more about
 respective sub-properties.
 
-Most SCTP-specific macros are available as constants in Python, so 
+Most SCTP-specific macros are available as constants in Python, so
 an experienced SCTP/C API programmer will feel at home at pysctp.
 The only difference is that constants used only inside a particular
 event, are defined as class constants and not as module constants,
@@ -128,14 +128,14 @@ class initparams(object):
 	SCTP default initialization parameters. New associations are opened
 	with the properties specified in this object.
 
-	Properties are: 
-	
+	Properties are:
+
 	num_ostreams
 	max_instreams
 	max_attempts
 	max_init_timeo (in seconds)
-	
-	Setting of properties will automatically call flush() (that will 
+
+	Setting of properties will automatically call flush() (that will
 	setsockopt the socket) unless "autoflush" is set to False.
 
 	User should never need to instantiate this class directly. For every
@@ -145,8 +145,8 @@ class initparams(object):
 
 	def __init__(self, container):
 		"""
-		The container object passed as parameter will (I hope) be a 
-		sctpsocket() descendant. It should offer the _get_initparams() 
+		The container object passed as parameter will (I hope) be a
+		sctpsocket() descendant. It should offer the _get_initparams()
 		and _set_initparams() for the socket it represents.
 		"""
 		self.autoflush = True
@@ -166,7 +166,7 @@ class initparams(object):
 	def initmsg(self):
 		"""
 		Builds a initmsg() object containing the same properties
-		as the socket initalization parameters. The initmsg() 
+		as the socket initalization parameters. The initmsg()
 		can then be changed and used to open a particular SCTP
 		association.
 		"""
@@ -176,7 +176,7 @@ class initparams(object):
 		r.max_attempts = self._max_attempts;
 		r.max_init_timeo = self._max_init_timeo;
 		return r
-	
+
 	def get_num_ostreams(self):
 		return self._num_ostreams;
 
@@ -184,7 +184,7 @@ class initparams(object):
 		self._num_ostreams = v;
 		if self.autoflush:
 			self.flush()
-		
+
 	def get_max_instreams(self):
 		return self._max_instreams;
 
@@ -192,7 +192,7 @@ class initparams(object):
 		self._max_instreams = v;
 		if self.autoflush:
 			self.flush()
-		
+
 	def get_max_attempts(self):
 		return self._max_attempts;
 
@@ -200,7 +200,7 @@ class initparams(object):
 		self._max_attempts = v;
 		if self.autoflush:
 			self.flush()
-		
+
 	def get_max_init_timeo(self):
 		return self._max_init_timeo;
 
@@ -208,7 +208,7 @@ class initparams(object):
 		self._max_init_timeo = v;
 		if self.autoflush:
 			self.flush()
-		
+
 	num_ostreams = property(get_num_ostreams, set_num_ostreams)
 	max_instreams = property(get_max_instreams, set_max_instreams)
 	max_attempts = property(get_max_attempts, set_max_attempts)
@@ -268,7 +268,7 @@ class notification(object):
 class assoc_change(notification):
 	"""
 	Association change notification. The relevant values are:
-	
+
 	state
 	error
 	outbound_streams
@@ -284,11 +284,11 @@ class assoc_change(notification):
 	port can also be used to identify the remote peer, but it can be ambiguous since
 	SCTP can make multihomed associations.
 
-	The "state" can be tested against "state_*" class constants.  If state is 
+	The "state" can be tested against "state_*" class constants.  If state is
 	state_CANT_START_ASSOCIATION, "error" will be one of the "error_*" constants.
 
-	The user should never need to instantiate this directly. This notification will 
-	be received only if user subscribed to receive that (see event_subscribe class 
+	The user should never need to instantiate this directly. This notification will
+	be received only if user subscribed to receive that (see event_subscribe class
 	for details).
 	"""
 	def __init__(self, values=None):
@@ -351,7 +351,7 @@ class remote_error(notification):
 	protocol does not use this feature, such messages don't need to be
 	handled.
 
-	It will NOT be received when an "actual", or low-level, error occurs. 
+	It will NOT be received when an "actual", or low-level, error occurs.
 	For such errors, assoc_change() objects are passed instead.
 
 	The user should never need to instantiate this directly. This
@@ -370,14 +370,14 @@ class send_failed(notification):
 	be sent.
 
 	When an association fails, all pending messages will be returned as send_failed()s
-	*after* assoc_change() notification is reveived. Also, send_failed() is returned 
+	*after* assoc_change() notification is reveived. Also, send_failed() is returned
 	when the message time-to-live expires (which is not a fatal error).
 
 	The "flag" attribute can have one of the flag_* class constants. More details about
 	the message, including the association ID, can be obtained inside the "info"
 	attribute, that is a sndrcvinfo() object. See sndrcvinfo class documentation for
 	more details.
-	
+
 	The user should never need to instantiate this directly. This
 	notification will be received only if user subscribed to receive
 	that (see event_subscribe class for details).
@@ -386,10 +386,10 @@ class send_failed(notification):
 		self.error = 0
 		self.assoc_id = 0
 		self.data = ""
-		
+
 		notification.__init__(self, values)
 		self.info = sndrcvinfo(self._info)
-		del values._info
+		del self._info
 
 	flag_DATA_UNSENT = _sctp.getconstant("SCTP_DATA_UNSENT")
 	flag_DATA_SENT = _sctp.getconstant("SCTP_DATA_SENT")
@@ -398,9 +398,9 @@ class shutdown_event(notification):
 	"""
 	Shutdown event. This event is received when an association goes
 	down. The only relevant attribute is assoc_id.
-	
-	If user has subscribed to receive assoc_change notifications, it 
-	will receive at least 2 messages (assoc_change and shutdown_event) 
+
+	If user has subscribed to receive assoc_change notifications, it
+	will receive at least 2 messages (assoc_change and shutdown_event)
 	for an association shutdown. In addition, if the association was
 	down by some problem, more error notifications will be received
 	before this event.
@@ -412,13 +412,13 @@ class shutdown_event(notification):
 	def __init__(self, values=None):
 		self.assoc_id = 0
 		notification.__init__(self, values)
-	
+
 class adaptation_event(notification):
 	"""
 	Adaption indication event. It signals that the remote peer requests
 	an specific adaptation layer.
 
-	In SCTP, you can pass an optional 32-bit metadata identifier 
+	In SCTP, you can pass an optional 32-bit metadata identifier
 	along each message, called "ppid". For protocols that actively use
 	this feature, it is like a subprotocol identifier, or "adaptation
 	layer". The message interpreter is chosen by this value. This is
@@ -474,17 +474,17 @@ notification_table = {
 
 def notification_factory(raw_notification):
 	"""
-	This function builds a notification based on a raw dictionary 
+	This function builds a notification based on a raw dictionary
 	received from the bottom-half (C language) of pysctp. The user
 	should never need to call this directly.
 
 	If the raw notification if of an unknown type, a "notification"
 	superclass object is returned instead, so the user has a chance
-	to test "type" and deal with that. A warning is sent to the 
-	stderr. It can well happen if SCTP is extended and the user is 
+	to test "type" and deal with that. A warning is sent to the
+	stderr. It can well happen if SCTP is extended and the user is
 	using an old version of PySCTP...
 
-	If sctpsocket.unexpected_event_raises_exception (default=False) 
+	If sctpsocket.unexpected_event_raises_exception (default=False)
 	is set to True, an unknown even will raise an exception (it is
 	not raised by this function, but it seemed important to note it
 	here too).
@@ -498,7 +498,7 @@ def notification_factory(raw_notification):
 	if not notification_table.has_key(num_type):
 		# raw object since we do not know the type of notification
 		o = notification(raw_notification)
-		print >> sys.stderr, "Warning: an unknown notification event (value %d) has arrived" % \
+		print "Warning: an unknown notification event (value %d) has arrived" % \
 			num_type
 	else:
 		o = notification_table[num_type](raw_notification)
@@ -508,7 +508,7 @@ def notification_factory(raw_notification):
 
 class event_subscribe(object):
 	"""
-	This class implements subproperties for sctpsocket.events "property". 
+	This class implements subproperties for sctpsocket.events "property".
 
 	Variables and methods:
 
@@ -519,14 +519,14 @@ class event_subscribe(object):
 		 be called every time a property is set.
 
 	clear(): Sets all properties to False, except data_io that is always set to
-		 True. Guarantees that sctp_recv() will only return when an actual 
+		 True. Guarantees that sctp_recv() will only return when an actual
 		 data message is received.
 
 	When the class is insantiated, it gets the kernel default values. So, if the
 	application just want to change one or two properties from the implementation
 	default, it should not need to use clear().
 
-	Properties: Every property sets whether a event class will or not be received 
+	Properties: Every property sets whether a event class will or not be received
 	via recvmsg() or sctp_recv().
 
 	data_io: refers to sndrcvinfo() (*)
@@ -534,7 +534,7 @@ class event_subscribe(object):
 	address: refers to paddr_change() event
 	send_failure: refers to send_failed() event
 	peer_error: refers to remote_error() event
-	shutdown: refers to shutdon_event() 
+	shutdown: refers to shutdon_event()
 	partial_delivery: refers to pdapi_event()
 	adaptation_layer: refers to adaptation_event()
 
@@ -556,7 +556,7 @@ class event_subscribe(object):
 		Flushes all event properties to the kernel.
 		"""
 		self.container._set_events(self.__dict__)
-	
+
 	def __set_property(self, key, value):
 		self.__dict__[key] = value
 		if self.autoflush:
@@ -663,7 +663,7 @@ class event_subscribe(object):
 	adaptationlayer = adaptation_layer
 
 
-########## STRUCTURES EXCHANGED VIA set/getsockopt() 
+########## STRUCTURES EXCHANGED VIA set/getsockopt()
 
 class rtoinfo(object):
 	"""
@@ -677,7 +677,7 @@ class rtoinfo(object):
 	Relevant attributes:
 
 	assoc_id: the association ID where this info came from, or where this information
-		  is going to be applied to. Ignored/unreliable for TCP-style sockets 
+		  is going to be applied to. Ignored/unreliable for TCP-style sockets
 		  because they hold only one association.
 
 	initial: Initial RTO in milisseconds
@@ -707,7 +707,7 @@ class assocparams(object):
 
 	FROM TSVWG document: "The maximum number of retransmissions before an address is considered
         unreachable is also tunable, but is address-specific, so it is covered in a separate option.
-	If an application attempts to set the value of the association maximum retransmission 
+	If an application attempts to set the value of the association maximum retransmission
 	parameter to more than the sum of all maximum retransmission parameters, setsockopt()
 	shall return an error."
 
@@ -715,7 +715,7 @@ class assocparams(object):
 	the current parameters object, change whatever is necessary and send it back.
 
 	assoc_id: the association ID where this info came from, or where this information
-		  is going to be applied to. Ignored/unreliable for TCP-style sockets 
+		  is going to be applied to. Ignored/unreliable for TCP-style sockets
 		  because they hold only one association.
 
 	assocmaxrxt(rw): Maximum retransmission attempts to create an association
@@ -725,7 +725,7 @@ class assocparams(object):
 	peer_rwnd(ro): Peer's current receiving window, subtracted by in-flight data.
 
 	local_rwnd(ro): Current local receiving window
- 
+
 	cookie_life(rw): Cookie life in miliseconds (cookies are used while creating an association)
 	"""
 	def __init__(self):
@@ -748,7 +748,7 @@ class paddrparams(object):
 	parameters object, change whatever is necessary and send it back.
 
 	assoc_id: the association ID where this info came from, or where this information
-		  is going to be applied to. Ignored/unreliable for TCP-style sockets 
+		  is going to be applied to. Ignored/unreliable for TCP-style sockets
 		  because they hold only one association.
 
 	sockaddr: the address this info came from, or where this information is going to
@@ -776,12 +776,12 @@ class paddrparams(object):
 	       flags_SACKDELAY_*: the same song, for Selective ACK delay features
 
 	       flags_PMTUD_*: the same song, but for the PMTU discovery feature.
-	       
+
 	       For every feature, there are two different flags for ENABLE and DISABLE
 	       because this allows to pass a zeroed flag which means "do not toggle
-	       any feature". Note that *simultaneous* use of *_ENABLED and *_DISABLED 
-	       for the same feature will have undefined results! 
-	       
+	       any feature". Note that *simultaneous* use of *_ENABLED and *_DISABLED
+	       for the same feature will have undefined results!
+
 
 	"""
 	def __init__(self):
@@ -810,7 +810,7 @@ class paddrparams(object):
 
 class paddrinfo(object):
 	"""
-	Peer Address information object class. The user should never need to 
+	Peer Address information object class. The user should never need to
 	instantiate this directly.  It is received via get_paddrinfo() method call.  It
 	is read-only, you cannot set anything by passing this object.
 
@@ -827,28 +827,28 @@ class paddrinfo(object):
 
 	srtt: current estimate of round-trip time
 
-	rto: current retransmission timeout 
+	rto: current retransmission timeout
 
 	mtu: current MTU
 	"""
 	def __init__(self):
 		self.assoc_id = 0	  # passed to getsockopt() (UDP)
 		self.sockaddr = ("", 0)   # passed to getsockopt()
-		self.state = 0 
+		self.state = 0
 		self.cwnd = 0
 		self.srtt = 0
 		self.rto = 0
 		self.mtu = 0
-        
+
 	state_INACTIVE = _sctp.getconstant("SCTP_INACTIVE")
 	state_ACTIVE = _sctp.getconstant("SCTP_ACTIVE")
 
 class status(object):
 	"""
-	SCTP Association Status Report object class. The user should never need to 
-	instantiate this directly.  It is received via get_status() socket method call. 
+	SCTP Association Status Report object class. The user should never need to
+	instantiate this directly.  It is received via get_status() socket method call.
 	It is read-only, you cannot set anything using this object.
-	
+
 	Relevant attributes:
 
 	assoc_id: the Association ID the information refers to. Should be ignored if
@@ -908,22 +908,22 @@ def features():
 	HAVE_* constants.
 
 	These flags may not be completely trustable, even in the sense that
-	some feature may be available despite absence of flag. LK-SCTP 1.0.3 has 
+	some feature may be available despite absence of flag. LK-SCTP 1.0.3 has
 	no HAVE_SCTP_PRSCTP macro, but Linux implements PR-SCTP extension
 	since kernel 2.6.10...
 	"""
 	flags = HAVE_SCTP | HAVE_KERNEL_SCTP
-	if _sctp.have_sctp_multibuf(): 
+	if _sctp.have_sctp_multibuf():
 		flags |= HAVE_SCTP_MULTIBUF
-	if _sctp.have_sctp_noconnect(): 
+	if _sctp.have_sctp_noconnect():
 		flags |= HAVE_SCTP_NOCONNECT
-	if _sctp.have_sctp_prsctp(): 
+	if _sctp.have_sctp_prsctp():
 		flags |= HAVE_SCTP_PRSCTP
-	if _sctp.have_sctp_addip(): 
+	if _sctp.have_sctp_addip():
 		flags |= HAVE_SCTP_ADDIP
-	if _sctp.have_sctp_setprimary(): 
+	if _sctp.have_sctp_setprimary():
 		flags |= HAVE_SCTP_CANSET_PRIMARY
-	if _sctp.have_sctp_sat_network(): 
+	if _sctp.have_sctp_sat_network():
 		flags |= HAVE_SCTP_SAT_NETWORK_CAPABILITY
 	return flags
 
@@ -937,8 +937,8 @@ class sctpsocket(object):
 	user convenience.
 
 	This class does NOT inherit from python standard sockets. It CONTAINS a python socket
-	and DELEGATES unknown method calls to that socket. So, we expect that sctpsocket 
-	objects can be used in most places where a regular socket is expected. 
+	and DELEGATES unknown method calls to that socket. So, we expect that sctpsocket
+	objects can be used in most places where a regular socket is expected.
 
 	Main methods:
 
@@ -950,18 +950,18 @@ class sctpsocket(object):
 	connections over a set of peer addresses. If the primary address fails to
 	respond (e.g. due to a network failure) it falls back to a secondary address.
 	It is intended for automatic network redundancy.)
-	
+
 	getpaddrs: Gets the list of remote peer addresses for an association
 	getladdrs: Gets the list of local addresses for an association
 	sctp_send: Sends a SCTP message.  Allows to pass some SCTP-specific parameters.
 		   If the specific parameters are not relevant, send() or sendto()
 		   can also be used for SCTP.
 	sctp_recv: Receives a SCTP messages. Returns SCTP-specific metadata along
-		   with the data. If the metadata is not relevant for the 
+		   with the data. If the metadata is not relevant for the
 		   application, recv()/recvfrom() and read() will also work.
 	peeloff: Detaches ("peels off") an association from an UDP-style socket.
 	accept: Overrides socket standard accept(), works the same way.
-	set_peer_primary: Sets the peer primary address 
+	set_peer_primary: Sets the peer primary address
 	set_primary: Set the local primary address
 
 	In addition, socket methods like bind(), connect() close(), set/getsockopt()
@@ -971,19 +971,19 @@ class sctpsocket(object):
 	Delegation methods (use with care):
 
 	sock(): returns the contained Python standard socket.
-	__getattr__(): this method does the delegation magic, forwarding all 
+	__getattr__(): this method does the delegation magic, forwarding all
 		       unknown attribute inquiries to the python socket.
 
 	Properties:
-	
+
 	nodelay: If True, disables Nagle algorithm, which causes any message to be immediately
 		 sent, potentially creating too much "tinygrams". Because of message-oriented
-		 nature of SCTP, some implementations have it turned on by default, while TCP 
+		 nature of SCTP, some implementations have it turned on by default, while TCP
 		 is mandated to have it off by default.
 
 	adaptation: 32-bit value related to the "ppid" metadata field sent along each data
 		  message. If this property is different than zero, the configured value
-		  is sent via ADAPTION INDICATION event to the remote peer when a new 
+		  is sent via ADAPTION INDICATION event to the remote peer when a new
 		  association is opened. This is intended to be used by telephony-related
 		  protocols.
 
@@ -999,12 +999,12 @@ class sctpsocket(object):
 	        in bytes. This value indirectly limits the size of the whole datagram, since
 		datagram = maxseg + a fixed overhead.
 
-	autoclose: For UDP-style sockets, sets/gets the auto-closing timeout for idle 
+	autoclose: For UDP-style sockets, sets/gets the auto-closing timeout for idle
 		   associations, in seconds. A value of 0 means that no automatic close
 		   will be done. This property does not work for TCP-style sockets.
 
-	IMPORTANT NOTE: the maximum message size is limited both by the implementation 
-	and by the transmission buffer (SO_SNDBUF). SCTP applications must configure 
+	IMPORTANT NOTE: the maximum message size is limited both by the implementation
+	and by the transmission buffer (SO_SNDBUF). SCTP applications must configure
 	the transmission and receiving bufers accordingly to the biggest messages it
 	excpects to deal with.
 
@@ -1036,14 +1036,14 @@ class sctpsocket(object):
 
 	def bindx(self, sockaddrs, action=BINDX_ADD):
 		"""
-		Binds to a list of addresses. This method() allows to bind to any subset 
+		Binds to a list of addresses. This method() allows to bind to any subset
 		of available interfaces, while standard bind() allows only one specific
 		interface, of all of them using the INADDR_ANY pseudo-address. Also, it
 		allows to *remove* the binding from one or more addresses.
 
 		If you don't need the extended functionality of bindx(), standard bind()
 		can be used and works as expected for SCTP.
-		
+
 		Parameters:
 
 		sockaddr: List of (address, port) tuples.
@@ -1062,7 +1062,7 @@ class sctpsocket(object):
 
 		sockaddrs: List of (address, port) tuples.
 
-		connectx() raises an exception if it is not successful. Warning: not all 
+		connectx() raises an exception if it is not successful. Warning: not all
 		SCTP implementations support connectx(). It will raise an RuntimeError()
 		if not supported.
 		"""
@@ -1082,7 +1082,7 @@ class sctpsocket(object):
 
 		Returns: a list of address/port tuples.
 		"""
-		
+
 		return _sctp.getpaddrs(self._sk.fileno(), assoc_id)
 
 	def getladdrs(self, assoc_id = 0): # -> tuple of sockaddrs as strings
@@ -1095,11 +1095,11 @@ class sctpsocket(object):
 			  TCP-style, this parameter is ignored. If zero is passed for an
 			  UDP-style socket, it refers to the socket default local address.
 
-		Returns: a list of address/port tuples. 
-		
-		Note that if you do not bind() explicitely (e.g. in client-side programs), 
+		Returns: a list of address/port tuples.
+
+		Note that if you do not bind() explicitely (e.g. in client-side programs),
 		this method will return only one wildcard address, which is useful only
-		to determinate the ephemeral port that the client is using. 
+		to determinate the ephemeral port that the client is using.
 		"""
 
 		return _sctp.getladdrs(self._sk.fileno(), assoc_id)
@@ -1119,8 +1119,8 @@ class sctpsocket(object):
 		ppid: adaptation layer value, a 32-bit metadata that is sent along the message.
 		      Defaults to 0.
 
-		flags: a bitmap of MSG_* flags. For example, MSG_UNORDERED indicates that 
-		       message can be delivered out-of-order, and MSG_EOF + empty message 
+		flags: a bitmap of MSG_* flags. For example, MSG_UNORDERED indicates that
+		       message can be delivered out-of-order, and MSG_EOF + empty message
 		       shuts down the association. Defaults to no flags set.
 
 		       It does NOT include flags like MSG_DONTROUTE or other low-level flags
@@ -1137,10 +1137,10 @@ class sctpsocket(object):
 		         if the event is directly related to this message transmission. So the
 			 application can know exactly which message triggered which event.
 			 Defaults to 0.
-		
+
 		The method returns the number of bytes sent. Ideally it is going to be exacly the
 		size of the message. Transmission errors will trigger an exception.
-		
+
 
 		WARNING: the maximum message size that can be sent via SCTP is limited
 		both by the implementation and by the transmission buffer (SO_SNDBUF).
@@ -1170,7 +1170,7 @@ class sctpsocket(object):
 		Parameters;
 
 		maxlen: the maximum message size that can be received. If bigger messages are
-		received, they will be received in fragments (non-atomically). The application 
+		received, they will be received in fragments (non-atomically). The application
 		must choose this carefully if it wants to keep the atomicity of messages!
 
 		Returns: (fromaddr, flags, msg, notif)
@@ -1179,9 +1179,9 @@ class sctpsocket(object):
 		          useful to identify the related association. Fortunately, assoc_id is
 			  a attribute of most notifications received via "notif" (see below)
 
-		flags: a bitmap of lower-level recvmsg() flags (FLAG_* flags).  
-		
-			FLAG_NOTIFICATION indicates that an event notification was 
+		flags: a bitmap of lower-level recvmsg() flags (FLAG_* flags).
+
+			FLAG_NOTIFICATION indicates that an event notification was
 			returned, instead of a data message.
 
 		 	FLAG_EOR indicates that this is the final fragment of a data message.
@@ -1193,13 +1193,13 @@ class sctpsocket(object):
 		msg: the actual data message. Since SCTP does not allow empty messages,
 		     an empty "msg" always means something special, either:
 
-		    	a) that "notif" contains an event notificatoin, if "flags" has 
+		    	a) that "notif" contains an event notificatoin, if "flags" has
 			   FLAG_NOTIFICATION set;
 
 			b) that association is closing (for TCP-style sockets only)
 
 		notif: notification event object. If "msg" is a data message, it will contain
-		       a sndrcvinfo() object that contains metadata about the message. If 
+		       a sndrcvinfo() object that contains metadata about the message. If
 		       "flags" has FLAG_NOTIFICATION set, it will contain some notification()
 		       subclass.
 
@@ -1213,7 +1213,7 @@ class sctpsocket(object):
 		* by the "maxlen" parameter passed. If message is bigger, it will be received
 		  in several fragments. The last fragment will have FLAG_EOR flag set.
 
-		* by the socket's reception buffer (SO_SNDRCV). The application must configure 
+		* by the socket's reception buffer (SO_SNDRCV). The application must configure
 		  this buffer accordingly, otherwise the message will be truncacted.
 		"""
 		(fromaddr, flags, msg, _notif) = _sctp.sctp_recv_msg(self._sk.fileno(), maxlen)
@@ -1227,20 +1227,20 @@ class sctpsocket(object):
 					raise IOError("An unknown event notification has arrived")
 		else:
 			notif = sndrcvinfo(_notif)
-		
+
 		return (fromaddr, flags, msg, notif)
 
-	def peeloff(self, assoc_id): 
+	def peeloff(self, assoc_id):
 		"""
 		Detaches ("peels off") an association from an UDP-style socket.
 		Will throw an IOError exception if it is not successful.
-		
+
 		Parameters:
 
 		assoc_id: Association ID to be peeled off
 
-		Returns: a sctpsocket_tcp() object. 
-		
+		Returns: a sctpsocket_tcp() object.
+
 		"""
 		fd = _sctp.peeloff(self._sk.fileno(), assoc_id)
 		if fd < 0:
@@ -1248,8 +1248,8 @@ class sctpsocket(object):
 
 		sk = socket.fromfd(fd, self._family, SOCK_STREAM, IPPROTO_SCTP)
 		return sctpsocket_tcp(self._family, sk)
-	
-	def accept(self): 
+
+	def accept(self):
 		"""
 		Frontend for socket.accept() method. Does exactly the same thing,
 		except that returns an sctpsocket_tcp object instead of a standard
@@ -1262,7 +1262,7 @@ class sctpsocket(object):
 			return (sctpsocket_tcp(self._family, sk), fromaddr)
 		else:
 			raise IOError("sctpsocket.accept() failed for unknown reason")
-	
+
 	def set_peer_primary(self, assoc_id, addr):
 		"""
 		Requests the remote peer to use our [addr] as the primary address. Parameters:
@@ -1284,7 +1284,7 @@ class sctpsocket(object):
 				# raise ValueError("assoc_id is needed for UDP-style sockets")
 				# FIXME
 				pass
-		
+
 		_sctp.set_peer_primary(self._sk.fileno(), assoc_id, addr)
 
 	def set_primary(self, assoc_id, addr):
@@ -1304,7 +1304,7 @@ class sctpsocket(object):
 		else:
 			if assoc_id == 0:
 				raise ValueError("assoc_id is needed for UDP-style sockets")
-		
+
 		_sctp.set_primary(self._sk.fileno(), assoc_id, addr)
 
 	# Properties
@@ -1344,7 +1344,7 @@ class sctpsocket(object):
 	def get_adaptation(self):
 		"""
 		Gets the adaptation layer indication from kernel.
-		
+
 		See class documentation for more details. (adaptation property)
 		"""
 		return _sctp.get_adaptation(self._sk.fileno())
@@ -1360,7 +1360,7 @@ class sctpsocket(object):
 	def get_disable_fragments(self):
 		"""
 		Queries kernel and returns True if message fragmenting is disable for
-		this socket. 
+		this socket.
 
 		See class documentation for more details. (disable_fragments property)
 		"""
@@ -1369,7 +1369,7 @@ class sctpsocket(object):
 	def set_disable_fragments(self, rvalue):
 		"""
 		Sets whether message fragmentation should be disable for this socket.
-		
+
 		See class documentation for more details. (disable_fragments property)
 		"""
 		_sctp.set_disable_fragments(self._sk.fileno(), rvalue)
@@ -1385,7 +1385,7 @@ class sctpsocket(object):
 
 	def _set_events(self, d):
 		"""
-		Private function, used only by event_subscribe() class. Sets the event 
+		Private function, used only by event_subscribe() class. Sets the event
 		subscriptions for this socket.
 
 		See class documentation for more details. (events property and event_subscribe class)
@@ -1438,7 +1438,7 @@ class sctpsocket(object):
 		"""
 		Returns a status structure for an SCTP association. For more information
 		about the returned data, see status() class docstring.
-		
+
 		Parameters:
 
 		assoc_id: the association ID of the association. Must be zero or not passed at all
@@ -1451,7 +1451,7 @@ class sctpsocket(object):
 		else:
 			if assoc_id == 0:
 				raise ValueError("assoc_id is needed for UDP-style sockets")
-		
+
 		s = status()
 		s.assoc_id = assoc_id
 		_sctp.get_status(self._sk.fileno(), s.__dict__, s.primary.__dict__)
@@ -1460,9 +1460,9 @@ class sctpsocket(object):
 
 	def get_paddrinfo(self, assoc_id, sockaddr):
 		"""
-		Returns a paddrinfo() object relative to an association/peer address pair. 
+		Returns a paddrinfo() object relative to an association/peer address pair.
 		For more information about the returned data, see paddrinfo() class docstring.
-		
+
 		Parameters:
 
 		assoc_id: the association ID of the association. Must be zero for TCP-style sockets.
@@ -1472,9 +1472,9 @@ class sctpsocket(object):
 			  peer address must be passed.
 
 		This method distinguishes from get_paddrparams() because information returned here
-		is read-only -- there is NOT a set_paddrinfo() method. 
+		is read-only -- there is NOT a set_paddrinfo() method.
 
-		A paddrinfo() object related to the primary association address is indirectly 
+		A paddrinfo() object related to the primary association address is indirectly
 		returned by get_status(), in the status.primary attribute.
 		"""
 		if self._style == TCP_STYLE:
@@ -1483,7 +1483,7 @@ class sctpsocket(object):
 		else:
 			if assoc_id == 0:
 				raise ValueError("assoc_id is needed for UDP-style sockets")
-		
+
 		s = paddrinfo()
 		s.assoc_id = assoc_id
 		s.sockaddr = sockaddr
@@ -1495,14 +1495,14 @@ class sctpsocket(object):
 		"""
 		Returns a assocparams() object relative to a SCTP association. For more information
 		about the returned data, see assocparams() class docstring.
-		
+
 		Parameters:
 
 		assoc_id: the association ID of the association. Must be zero or not passed at all
 			  for TCP-style sockets. If you pass a zero for UDP-style sockets, it will
 			  return the default parameters of the whole endpoint.
 		"""
-		
+
 		s = assocparams()
 		s.assoc_id = assoc_id
 		_sctp.get_assocparams(self._sk.fileno(), s.__dict__)
@@ -1514,14 +1514,14 @@ class sctpsocket(object):
 		Sets parameters for a SCTP association. Parameters:
 
 		o: assocparams() object containing the assoc_id of the association be
-		   affected, plus the association parameters. If assoc_id is zero and 
+		   affected, plus the association parameters. If assoc_id is zero and
 		   socket is UDP style, it will set the default parameters for future
 		   associations.
 
 		Warning: it seems not to work in TCP-style sockets, in client side.
 			 (we do not know the reason.)
 
-		It is advisable not to create the assocparams() object from scratch, but 
+		It is advisable not to create the assocparams() object from scratch, but
 		rather get it with assocparms(), change whatever necessary and send it back.
 		It guarantees that it has sensible defaults and a correct identification of
 		the association to be affected.
@@ -1530,9 +1530,9 @@ class sctpsocket(object):
 
 	def get_paddrparams(self, assoc_id, sockaddr):
 		"""
-		Returns a paddrparams() object relative to an association/peer address pair. 
+		Returns a paddrparams() object relative to an association/peer address pair.
 		For more information about the returned data, see paddrparams() class docstring.
-		
+
 		Parameters:
 
 		assoc_id: the association ID of the association. Must be zero for TCP-style sockets.
@@ -1553,7 +1553,7 @@ class sctpsocket(object):
 		else:
 			if assoc_id == 0:
 				raise ValueError("assoc_id is needed for UDP-style sockets")
-		
+
 		s = paddrparams()
 		s.assoc_id = assoc_id
 		s.sockaddr = sockaddr
@@ -1568,7 +1568,7 @@ class sctpsocket(object):
 		o: paddrparams() object containing the assoc_id/address of the peer to be
 		   affected, plus the address parameters.
 
-		It is advisable not to create the paddrparams() object from scratch, but 
+		It is advisable not to create the paddrparams() object from scratch, but
 		rather get it with get_paddrparms(), change whatever necessary and send it back.
 		It guarantees that it has sensible defaults and a correct identification of
 		the association/address to be affected.
@@ -1579,7 +1579,7 @@ class sctpsocket(object):
 		"""
 		Returns a RTO information structure for a SCTP association. For more information
 		about the returned data, see rtoinfo() class docstring.
-		
+
 		Parameters:
 
 		assoc_id: the association ID of the association. Must be zero or not passed at all
@@ -1587,7 +1587,7 @@ class sctpsocket(object):
 			  information refers to the socket defaults, and not any particular
 			  opened association.
 		"""
-		
+
 		s = rtoinfo()
 		s.assoc_id = assoc_id
 		_sctp.get_rtoinfo(self._sk.fileno(), s.__dict__)
@@ -1615,7 +1615,7 @@ class sctpsocket(object):
 		Returns the underlying Python socket of an SCTP socket object. Use with care.
 		"""
 		return self._sk
-	
+
 	def __getattr__(self, name):
 		"""
 		Delegation trick that routes every unknown attribute to the underlying
@@ -1647,15 +1647,15 @@ class sctpsocket_tcp(sctpsocket):
 
 	getpaddrs() and getladdrs() methods are overriden so they can be called
 	without the assoc_id parameter (since the association is implicit for
-	this type of socket). Still, if a parameter is passed, it is simply 
+	this type of socket). Still, if a parameter is passed, it is simply
 	ignored, to avoid creating unnecessary interface differences between
 	TCP and UDP-style sockets.
 
 	set_primary() and set_peer_primary() are NOT overriden in order
 	to omit the assoc_id, so be sure to pass a (zero) assoc_id.
 
-	All functionalities are inherited from the sctpsocket() father class. 
-	This class is just a front-end. For more documentation, take a look 
+	All functionalities are inherited from the sctpsocket() father class.
+	This class is just a front-end. For more documentation, take a look
 	at sctpsocket() class, as well as documentation of the methods.
 	"""
 	def __init__(self, family, sk=None):
@@ -1705,19 +1705,19 @@ class sctpsocket_udp(sctpsocket):
 	The associations are also closed automatically after a idle time. The
 	timeout is acessible/configurable via sctpsocket.autoclose property.
 	The value is in seconds, 120 is a common default. Setting it to zero
-	means that associations are never (automatically) closed. 
+	means that associations are never (automatically) closed.
 
 	Associations can be opened and/or closed manually by passing MSG_EOF flag
 	along an empty message (empty messages are not actually allowed by SCTP).
-	
-	All functionalities are inherited from the sctpsocket() father class. 
-	This class is just a front-end. For more documentation, take a look 
+
+	All functionalities are inherited from the sctpsocket() father class.
+	This class is just a front-end. For more documentation, take a look
 	at sctpsocket() class, as well as documentation of the methods.
 	"""
 	def __init__(self, family, sk=None):
 		"""
-		Creates a sctpsocket_udp() object. Parameters: 
-		
+		Creates a sctpsocket_udp() object. Parameters:
+
 		family: socket.AF_INET or socket.AF_INET6.
 
 		sk (optional): Normally. sctpsocket() creates its own socket.
@@ -1732,4 +1732,3 @@ class sctpsocket_udp(sctpsocket):
 		Stub method to block unappropriate calling.
 		"""
 		raise IOError("UDP-style sockets have no accept() operation")
-

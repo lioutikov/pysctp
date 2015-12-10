@@ -1,7 +1,7 @@
 /* SCTP bindings for Python
  *
  * _sctp.c: C-side bindings
- * 
+ *
  * This library is free software; you can redistribute it and/or modify it
  * under the terms of the GNU Lesser General Public License as published by the
  * Free Software Foundation; either version 2.1 of the License, or (at your
@@ -73,7 +73,7 @@ static PyObject* set_paddrparams(PyObject* dummy, PyObject* args);
 static int to_sockaddr(const char *caddr, int port, struct sockaddr* saddr, int* slen);
 static int from_sockaddr(struct sockaddr* saddr, int* family, int* slen, int* port, char* caddr, int cnt);
 
-static PyMethodDef _sctpMethods[] = 
+static PyMethodDef _sctpMethods[] =
 {
 	{"getconstant", getconstant, METH_VARARGS, ""},
 	{"have_sctp_multibuf", have_sctp_multibuf, METH_VARARGS, ""},
@@ -138,7 +138,7 @@ typedef struct ktuple {
 #define MSG_EOF       SCTP_EOF
 #endif
 
-static ktuple _constants[] = 
+static ktuple _constants[] =
 {
 	{"BINDX_ADD", SCTP_BINDX_ADD_ADDR},
 	{"BINDX_REMOVE", SCTP_BINDX_REM_ADDR},
@@ -218,7 +218,7 @@ static ktuple _constants[] =
 	{"SCTP_SEND_FAILED", SCTP_SEND_FAILED},
 	{"SCTP_REMOTE_ERROR", SCTP_REMOTE_ERROR},
 	{"SCTP_SHUTDOWN_EVENT", SCTP_SHUTDOWN_EVENT},
-	{"SCTP_PARTIAL_DELIVERY_EVENT", SCTP_PARTIAL_DELIVERY_EVENT}, 
+	{"SCTP_PARTIAL_DELIVERY_EVENT", SCTP_PARTIAL_DELIVERY_EVENT},
 	{"SCTP_ADAPTATION_INDICATION", SCTP_ADAPTATION_INDICATION},
 	{0, -1}
 };
@@ -226,10 +226,10 @@ static ktuple _constants[] =
 static PyObject* getconstant(PyObject* dummy, PyObject* args)
 {
 	PyObject* ret = 0;
-	
+
 	char* needle;
 	const struct ktuple* haystack;
-	
+
 	if (PyArg_ParseTuple(args, "s", &needle)) {
 		for(haystack = &(_constants[0]); haystack->key; ++haystack) {
 			if (strcmp(haystack->key, needle) == 0) {
@@ -375,7 +375,7 @@ static PyObject* get_assocparams(PyObject* dummy, PyObject* args)
 	struct sctp_assocparams v;
 	socklen_t lv = sizeof(v);
 	int ok;
-	
+
 	ok = PyArg_ParseTuple(args, "iO", &fd, &dict) && PyDict_Check(dict);
 	ok = ok && (oassoc_id = PyDict_GetItemString(dict, "assoc_id"));
 	ok = ok && PyInt_Check(oassoc_id);
@@ -415,7 +415,7 @@ static PyObject* set_assocparams(PyObject* dummy, PyObject* args)
 	int fd;
 	struct sctp_assocparams v;
 	int ok;
-	
+
 	ok = PyArg_ParseTuple(args, "iO", &fd, &dict) && PyDict_Check(dict);
 	ok = ok && (oassoc_id = PyDict_GetItemString(dict, "assoc_id"));
 	ok = ok && (oassocmaxrxt = PyDict_GetItemString(dict, "assocmaxrxt"));
@@ -471,7 +471,7 @@ static PyObject* get_paddrparams(PyObject* dummy, PyObject* args)
 	struct sctp_paddrparams v;
 	socklen_t lv = sizeof(v);
 	int ok;
-	
+
 	ok = PyArg_ParseTuple(args, "iO", &fd, &dict) && PyDict_Check(dict);
 	ok = ok && (oassoc_id = PyDict_GetItemString(dict, "assoc_id"));
 	ok = ok && (oaddresstuple = PyDict_GetItemString(dict, "sockaddr"));
@@ -525,7 +525,7 @@ static PyObject* set_paddrparams(PyObject* dummy, PyObject* args)
 	struct sctp_paddrparams v;
 	int ok;
 	int slen_dummy;
-	
+
 	ok = PyArg_ParseTuple(args, "iO", &fd, &dict) && PyDict_Check(dict);
 
 	ok = ok && (oassoc_id = PyDict_GetItemString(dict, "assoc_id"));
@@ -595,7 +595,7 @@ static PyObject* get_status(PyObject* dummy, PyObject* args)
 	struct sctp_status v;
 	socklen_t lv = sizeof(v);
 	int ok;
-	
+
 	ok = PyArg_ParseTuple(args, "iOO", &fd, &dict, &dict2) && \
 	     					PyDict_Check(dict) && PyDict_Check(dict2);
 	ok = ok && (oassoc_id = PyDict_GetItemString(dict, "assoc_id"));
@@ -619,7 +619,7 @@ static PyObject* get_status(PyObject* dummy, PyObject* args)
 		PyDict_SetItemString(dict, "outstrms", PyInt_FromLong(v.sstat_outstrms));
 		PyDict_SetItemString(dict, "fragmentation_point", PyInt_FromLong(v.sstat_fragmentation_point));
 
-		if (from_sockaddr((struct sockaddr*) &(v.sstat_primary.spinfo_address), &family, 
+		if (from_sockaddr((struct sockaddr*) &(v.sstat_primary.spinfo_address), &family,
 					&len, &port, caddr, sizeof(caddr))) {
 			oaddr = PyTuple_New(2);
 			PyTuple_SetItem(oaddr, 0, PyString_FromString(caddr));
@@ -629,7 +629,7 @@ static PyObject* get_status(PyObject* dummy, PyObject* args)
 			oaddr = Py_None;
 			Py_INCREF(Py_None);
 		}
-		
+
 		PyDict_SetItemString(dict2, "sockaddr", oaddr);
 		PyDict_SetItemString(dict2, "assoc_id", PyInt_FromLong(v.sstat_primary.spinfo_assoc_id));
 		PyDict_SetItemString(dict2, "state", PyInt_FromLong(v.sstat_primary.spinfo_state));
@@ -656,7 +656,7 @@ static PyObject* get_paddrinfo(PyObject* dummy, PyObject* args)
 	struct sctp_paddrinfo v;
 	socklen_t lv = sizeof(v);
 	int ok;
-	
+
 	ok = PyArg_ParseTuple(args, "iO", &fd, &dict) && PyDict_Check(dict);
 	ok = ok && (oassoc_id = PyDict_GetItemString(dict, "assoc_id"));
 	ok = ok && (oaddresstuple = PyDict_GetItemString(dict, "sockaddr"));
@@ -697,7 +697,7 @@ static PyObject* get_rtoinfo(PyObject* dummy, PyObject* args)
 	struct sctp_rtoinfo v;
 	socklen_t lv = sizeof(v);
 	int ok;
-	
+
 	ok = PyArg_ParseTuple(args, "iO", &fd, &dict) && PyDict_Check(dict);
 	ok = ok && (oassoc_id = PyDict_GetItemString(dict, "assoc_id"));
 	ok = ok && PyInt_Check(oassoc_id);
@@ -733,7 +733,7 @@ static PyObject* set_rtoinfo(PyObject* dummy, PyObject* args)
 	int fd;
 	struct sctp_rtoinfo v;
 	int ok;
-	
+
 	ok = PyArg_ParseTuple(args, "iO", &fd, &dict) && PyDict_Check(dict);
 	ok = ok && (oassoc_id = PyDict_GetItemString(dict, "assoc_id"));
 	ok = ok && (oinitial = PyDict_GetItemString(dict, "initial"));
@@ -815,7 +815,7 @@ static PyObject* set_initparams(PyObject* dummy, PyObject* args)
 		v.sinit_max_instreams = PyInt_AsLong(o_max_instreams);
 		v.sinit_max_attempts = PyInt_AsLong(o_max_attempts);
 		v.sinit_max_init_timeo = PyInt_AsLong(o_max_init_timeo);
-		
+
 		if (setsockopt(fd, SOL_SCTP, SCTP_INITMSG, &v, sizeof(v))) {
 			PyErr_SetFromErrno(PyExc_IOError);
 		} else {
@@ -829,7 +829,7 @@ static PyObject* peeloff(PyObject* dummy, PyObject* args)
 {
 	PyObject* ret = 0;
 	int v1, v2, fd;
-	
+
 	if (PyArg_ParseTuple(args, "ii", &v1, &v2)) {
 		fd = sctp_peeloff(v1, v2);
 		if (fd < 0) {
@@ -846,7 +846,6 @@ static PyObject* get_events(PyObject* dummy, PyObject* args)
 {
 	PyObject* ret = 0;
 	int fd;
-	char padding[4];
 	struct sctp_event_subscribe v;
 	socklen_t lv = 10;
 
@@ -905,7 +904,7 @@ static PyObject* set_events(PyObject* dummy, PyObject* args)
 		v.sctp_shutdown_event = PyInt_AsLong(o_shutdown);
 		v.sctp_partial_delivery_event = PyInt_AsLong(o_partial_delivery);
 		v.sctp_adaptation_layer_event = PyInt_AsLong(o_adaptation_layer);
-		
+
 		if (setsockopt(fd, SOL_SCTP, SCTP_EVENTS, &v, sizeof(v))) {
 			PyErr_SetFromErrno(PyExc_IOError);
 		} else {
@@ -1013,7 +1012,7 @@ static PyObject* get_adaptation(PyObject* dummy, PyObject* args)
 	PyObject* ret = 0;
 	int fd, v;
 	socklen_t lv = sizeof(v);
-	
+
 	if (PyArg_ParseTuple(args, "i", &fd)) {
 		if (getsockopt(fd, SOL_SCTP, SCTP_ADAPTATION_LAYER, &v, &lv)) {
 			PyErr_SetFromErrno(PyExc_IOError);
@@ -1073,7 +1072,7 @@ static int to_sockaddr(const char *caddr, int port, struct sockaddr* saddr, int*
 	}
 
 #ifdef DEBUG
-	printf("result is %x.%x.%x\n", 
+	printf("result is %x.%x.%x\n",
 			((struct sockaddr_in*)saddr)->sin_family,
 			((struct sockaddr_in*)saddr)->sin_addr.s_addr,
 			((struct sockaddr_in*)saddr)->sin_port);
@@ -1211,7 +1210,7 @@ static PyObject* bindx(PyObject* dummy, PyObject* args)
 	struct sockaddr* saddrs;
 	int saddr_len, saddrs_len;
 	int addrcount;
-	int flags;
+	int flags = 0;
 	int x;
 
 	if (! PyArg_ParseTuple(args, "iOi", &fd, &addrs, &flags)) {
@@ -1242,7 +1241,7 @@ static PyObject* bindx(PyObject* dummy, PyObject* args)
 			free(saddrs);
 			return ret;
 		}
-		
+
 		if (! to_sockaddr(caddr, iport, &saddr, &saddr_len)) {
 			PyErr_Format(PyExc_ValueError, "Invalid address: %s", caddr);
 			free(saddrs);
@@ -1292,7 +1291,7 @@ static PyObject* getpaddrs(PyObject* dummy, PyObject* args)
 		if (count == 0) {
 			saddrs = 0;
 		}
-		
+
 		ret = PyTuple_New(count);
 		char *p = (char*) saddrs;
 
@@ -1302,7 +1301,7 @@ static PyObject* getpaddrs(PyObject* dummy, PyObject* args)
 			int port;
 			PyObject* oaddr;
 
-			if (from_sockaddr((struct sockaddr*) p, &family, &len, &port, 
+			if (from_sockaddr((struct sockaddr*) p, &family, &len, &port,
 										addr, sizeof(addr))) {
 				oaddr = PyTuple_New(2);
 				PyTuple_SetItem(oaddr, 0, PyString_FromString(addr));
@@ -1312,7 +1311,7 @@ static PyObject* getpaddrs(PyObject* dummy, PyObject* args)
 				// something's wrong; not safe to continue
 				break;
 			}
-			
+
 			p += len;
 		}
 
@@ -1351,17 +1350,17 @@ static PyObject* getladdrs(PyObject* dummy, PyObject* args)
 		if (count == 0) {
 			saddrs = 0;
 		}
-		
+
 		ret = PyTuple_New(count);
 		char *p = (char*) saddrs;
-	
+
 		for(x = 0; x < count; ++x) {
 			int len;
 			int family;
 			int port;
 			PyObject* oaddr;
 
-			if (from_sockaddr((struct sockaddr*) p, &family, &len, &port, 
+			if (from_sockaddr((struct sockaddr*) p, &family, &len, &port,
 										addr, sizeof(addr))) {
 				oaddr = PyTuple_New(2);
 				PyTuple_SetItem(oaddr, 0, PyString_FromString(addr));
@@ -1371,7 +1370,7 @@ static PyObject* getladdrs(PyObject* dummy, PyObject* args)
 				// something's wrong; not safe to continue
 				break;
 			}
-			
+
 			p += len;
 		}
 
@@ -1401,7 +1400,7 @@ static PyObject* sctp_send_msg(PyObject* dummy, PyObject* args)
 
 	PyObject *ret = 0;
 
-	if (! PyArg_ParseTuple(args, "is#(si)iiiii", &fd, &msg, &msg_len, &to, &port, 
+	if (! PyArg_ParseTuple(args, "is#(si)iiiii", &fd, &msg, &msg_len, &to, &port,
 					&ppid, &flags, &stream, &ttl, &context)) {
 		return ret;
 	}
@@ -1411,11 +1410,11 @@ static PyObject* sctp_send_msg(PyObject* dummy, PyObject* args)
 		return ret;
 	}
 
-	// TODO: "to" can contain and assoc_id. For this to be possible, we will need to 
+	// TODO: "to" can contain and assoc_id. For this to be possible, we will need to
 	//       use bare sendmsg() instead of sctp_sendmsg().
 
 	if (strlen(to) == 0) {
-		// special case: should pass NULL 
+		// special case: should pass NULL
 		sto_len = 0;
 		psto = 0;
 	} else {
@@ -1425,8 +1424,10 @@ static PyObject* sctp_send_msg(PyObject* dummy, PyObject* args)
 		}
 	}
 
-	size_sent = sctp_sendmsg(fd, msg, msg_len, (struct sockaddr*) psto, sto_len, ppid, 
+	Py_BEGIN_ALLOW_THREADS
+	size_sent = sctp_sendmsg(fd, msg, msg_len, (struct sockaddr*) psto, sto_len, ppid,
 					flags, stream, ttl, context);
+	Py_END_ALLOW_THREADS
 
 	if (size_sent < 0) {
 		PyErr_SetFromErrno(PyExc_IOError);
@@ -1468,7 +1469,7 @@ void interpret_notification(PyObject* dict, const void *pnotif, int size)
 		PyDict_SetItemString(dict, "assoc_id", PyInt_FromLong(n->sac_assoc_id));
 		}
 		break;
-	case SCTP_PEER_ADDR_CHANGE: 
+	case SCTP_PEER_ADDR_CHANGE:
 		{
 		const struct sctp_paddr_change* n = &(notif->sn_paddr_change);
 		char caddr[256];
@@ -1477,7 +1478,7 @@ void interpret_notification(PyObject* dict, const void *pnotif, int size)
 		int port;
 		PyObject* oaddr;
 
-		if (from_sockaddr((struct sockaddr*) &(n->spc_aaddr), &family, &len, &port, 
+		if (from_sockaddr((struct sockaddr*) &(n->spc_aaddr), &family, &len, &port,
 									caddr, sizeof(caddr))) {
 			oaddr = PyTuple_New(2);
 			PyTuple_SetItem(oaddr, 0, PyString_FromString(caddr));
@@ -1515,7 +1516,7 @@ void interpret_notification(PyObject* dict, const void *pnotif, int size)
 		const struct sctp_remote_error* n = &(notif->sn_remote_error);
 		const char* cdata = ((char*) notif) + sizeof(struct sctp_remote_error);
 		int ldata = size - sizeof(struct sctp_remote_error);
-		
+
 		if (ldata >= 0) {
 			PyDict_SetItemString(dict, "error", PyInt_FromLong(n->sre_error));
 			PyDict_SetItemString(dict, "assoc_id", PyInt_FromLong(n->sre_assoc_id));
@@ -1558,13 +1559,13 @@ static PyObject* sctp_recv_msg(PyObject* dummy, PyObject* args)
 	char cfrom[256];
 	char *msg;
 	int size;
-	int flags;
+	int flags = 0;
 	struct sctp_sndrcvinfo sinfo;
 
 	PyObject* notification = PyDict_New();
 	PyObject* ret = 0;
 	PyObject* oaddr = 0;
-	
+
 	if (! PyArg_ParseTuple(args, "ii", &fd, &max_len)) {
 		return ret;
 	}
@@ -1578,7 +1579,9 @@ static PyObject* sctp_recv_msg(PyObject* dummy, PyObject* args)
 	bzero(&sfrom, sizeof(sfrom));
 	bzero(&sinfo, sizeof(sinfo));
 
+	Py_BEGIN_ALLOW_THREADS
 	size = sctp_recvmsg(fd, msg, max_len, (struct sockaddr*) &sfrom, &sfrom_len, &sinfo, &flags);
+	Py_END_ALLOW_THREADS
 
 	if (size < 0) {
 		free(msg);
@@ -1602,7 +1605,7 @@ static PyObject* sctp_recv_msg(PyObject* dummy, PyObject* args)
 		oaddr = Py_None;
 		Py_INCREF(Py_None);
 	}
-			
+
 	ret = PyTuple_New(4);
 	PyTuple_SetItem(ret, 0, oaddr);
 	PyTuple_SetItem(ret, 1, PyInt_FromLong(flags));
@@ -1617,4 +1620,3 @@ static PyObject* sctp_recv_msg(PyObject* dummy, PyObject* args)
 	free(msg);
 	return ret;
 }
-
